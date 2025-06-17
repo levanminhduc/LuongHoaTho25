@@ -19,8 +19,13 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.344.0",
     "next": "15.3.3",
+<<<<<<< HEAD
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+=======
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+>>>>>>> 2763e436f2cc17d7447627e9607911591d320994
     "react-hook-form": "^7.49.3",
     "tailwind-merge": "^2.5.2",
     "zod": "^3.22.4",
@@ -30,8 +35,13 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+<<<<<<< HEAD
     "@types/react": "^18",
     "@types/react-dom": "^18",
+=======
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+>>>>>>> 2763e436f2cc17d7447627e9607911591d320994
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
