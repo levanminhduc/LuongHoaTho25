@@ -36,7 +36,7 @@ export default function ImportExcel() {
 
     try {
       setUploading(true);
-      const response = await fetch("http://localhost:4002/api/payroll/import", {
+      const response = await fetch("http://localhost:4002/api/import/salary", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

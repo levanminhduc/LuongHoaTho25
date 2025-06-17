@@ -27,11 +27,18 @@ import { SalaryImport } from '../../entities/salary-import.entity';
           },
         }),
         fileFilter: (req, file, callback) => {
-          if (file.mimetype.match(/\/(xlsx|xls)$/)) {
+          if (
+            file.mimetype.match(/\/(xlsx|xls)$/) ||
+            file.mimetype === 'application/vnd.ms-excel' ||
+            file.mimetype === 'text/csv' ||
+            file.originalname.match(/\.(xlsx|xls|csv)$/i)
+          ) {
             callback(null, true);
           } else {
             callback(
-              new Error('Chỉ chấp nhận file Excel (.xlsx, .xls)'),
+              new Error(
+                'Chỉ chấp nhận file Excel (.xlsx, .xls) hoặc CSV (.csv)',
+              ),
               false,
             );
           }

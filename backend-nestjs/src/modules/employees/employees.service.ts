@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Employee } from '../../entities/employee.entity';
@@ -21,9 +25,13 @@ export class EmployeesService {
     private employeeRepository: Repository<Employee>,
   ) {}
 
-  async getAllEmployees(page: number = 1, limit: number = 10, keyword: string = '') {
+  async getAllEmployees(
+    page: number = 1,
+    limit: number = 10,
+    keyword: string = '',
+  ) {
     const skip = (page - 1) * limit;
-    
+
     const whereCondition = keyword
       ? [
           { ma_nv: Like(`%${keyword}%`) },
@@ -93,6 +101,15 @@ export class EmployeesService {
       ma_nv,
       ho_ten,
       cccd,
+      chuc_vu: 'Nhân viên', // Giá trị mặc định
+      phong_ban: 'Chưa phân công', // Giá trị mặc định
+      luong_co_ban: 0,
+      he_so_luong: 1.0,
+      so_ngay_cong: 0,
+      phu_cap: 0,
+      thuong: 0,
+      khau_tru: 0,
+      luong_thuc_linh: 0,
     });
 
     const savedEmployee = await this.employeeRepository.save(employee);
@@ -120,7 +137,9 @@ export class EmployeesService {
       });
 
       if (existingCCCD) {
-        throw new BadRequestException(`CCCD ${updateEmployeeDto.cccd} đã được sử dụng`);
+        throw new BadRequestException(
+          `CCCD ${updateEmployeeDto.cccd} đã được sử dụng`,
+        );
       }
     }
 
