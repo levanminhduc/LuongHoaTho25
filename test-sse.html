@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Test</title>
+</head>
+<body>
+    <h1>SSE Connection Test</h1>
+    <div id="status">Disconnected</div>
+    <div id="logs"></div>
+    
+    <script>
+        // Admin token (you need to get this from login)
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZnVsbE5hbWUiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzM0MTU5NjAwLCJleHAiOjE3MzQxNjMyMDB9.test'; // Replace with real token
+        
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        
+        function log(message) {
+            console.log(message);
+            logsDiv.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+        }
+        
+        function testSSE() {
+            log('🧪 Testing SSE connection...');
+            
+            // Test basic API first
+            fetch('http://localhost:4002/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    log('✅ Backend health check OK: ' + JSON.stringify(data));
+                    
+                    // Now test SSE
+                    const sseUrl = `http://localhost:4002/api/sse/connect?token=${encodeURIComponent(token)}`;
+                    log('📡 Connecting to: ' + sseUrl);
+                    
+                    const eventSource = new EventSource(sseUrl);
+                    
+                    eventSource.onopen = function(event) {
+                        log('✅ SSE Connection opened!');
+                        statusDiv.textContent = 'Connected';
+                        statusDiv.style.color = 'green';
+                    };
+                    
+                    eventSource.onmessage = function(event) {
+                        log('📨 SSE Message: ' + event.data);
+                    };
+                    
+                    eventSource.onerror = function(event) {
+                        log('❌ SSE Error: ' + JSON.stringify(event));
+                        statusDiv.textContent = 'Error';
+                        statusDiv.style.color = 'red';
+                    };
+                    
+                })
+                .catch(error => {
+                    log('❌ Backend health check failed: ' + error.message);
+                });
+        }
+        
+        // Start test when page loads
+        window.onload = testSSE;
+    </script>
+</body>
+</html>
