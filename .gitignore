@@ -114,3 +114,30 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Test files and temporary development files
+test-*.csv
+test-*.json
+test-*.html
+test-*.js
+*-test.js
+*-test.html
+*-test.csv
+sample-*.csv
+sample-*.json
+demo-*.html
+api-test.*
+simple-test.*
+
+# Development scripts
+start-*.bat
+start-*.ps1
+stop-*.bat
+fix-*.bat
+test-*.bat
+
+# Documentation drafts
+*-DRAFT.md
+*-TEMP.md
+TEMP-*.md
+DRAFT-*.md
