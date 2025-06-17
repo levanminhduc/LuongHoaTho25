@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Lương</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-primary:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .form-group { margin-bottom: 15px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .table th { background: #f8f9fa; font-weight: 600; }
+        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { text-align: center; padding: 40px; }
+        .header { background: #343a40; color: white; padding: 20px 0; margin-bottom: 30px; }
+        .header h1 { text-align: center; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .currency { color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:4001/api';
+        
+        // API Service
+        const api = {
+            async login(credentials) {
+                const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
+                return response.data;
+            },
+            
+            async getPayroll(token) {
+                const response = await axios.get(`${API_BASE_URL}/payroll`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                return response.data;
+            },
+            
+            async getEmployeePayroll(ma_nv, token) {
+                const response = await axios.get(`${API_BASE_URL}/payroll/${ma_nv}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                return response.data;
+            }
+        };
+
+        // Format currency
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        };
+
+        // Login Component
+        const Login = ({ onLogin }) => {
+            const [credentials, setCredentials] = useState({
+                username: '',
+                password: '',
+                role: 'admin'
+            });
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                setError('');
+                
+                try {
+                    const result = await api.login(credentials);
+                    if (result.success) {
+                        onLogin(result.token, result.user);
+                    } else {
+                        setError(result.message || 'Đăng nhập thất bại');
+                    }
+                } catch (error) {
+                    setError(error.response?.data?.message || 'Lỗi kết nối server');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🏢 Hệ Thống Quản Lý Lương</h1>
+                    </div>
+                    
+                    <div className="card" style={{maxWidth: '400px', margin: '0 auto'}}>
+                        <h2 style={{textAlign: 'center', marginBottom: '20px'}}>Đăng Nhập</h2>
+                        
+                        {error && (
+                            <div className="alert alert-danger">{error}</div>
+                        )}
+                        
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label>Tên đăng nhập:</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={credentials.username}
+                                    onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+                                    placeholder="admin hoặc mã nhân viên (VD: NV001)"
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Mật khẩu:</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    value={credentials.password}
+                                    onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                                    placeholder="Nhập mật khẩu"
+                                    required
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Vai trò:</label>
+                                <select
+                                    className="form-control"
+                                    value={credentials.role}
+                                    onChange={(e) => setCredentials({...credentials, role: e.target.value})}
+                                >
+                                    <option value="admin">Quản trị viên</option>
+                                    <option value="employee">Nhân viên</option>
+                                </select>
+                            </div>
+                            
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                style={{width: '100%'}}
+                                disabled={loading}
+                            >
+                                {loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}
+                            </button>
+                        </form>
+                        
+                        <div style={{marginTop: '20px', fontSize: '12px', color: '#666', textAlign: 'center'}}>
+                            <p><strong>Tài khoản demo:</strong></p>
+                            <p>Admin: admin/admin123</p>
+                            <p>Nhân viên: NV001/123456</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Dashboard Component
+        const Dashboard = ({ token, user, onLogout }) => {
+            const [payrollData, setPayrollData] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState('');
+
+            useEffect(() => {
+                loadPayrollData();
+            }, []);
+
+            const loadPayrollData = async () => {
+                setLoading(true);
+                setError('');
+                
+                try {
+                    let result;
+                    if (user.role === 'admin') {
+                        result = await api.getPayroll(token);
+                    } else {
+                        result = await api.getEmployeePayroll(user.username, token);
+                    }
+                    
+                    if (result.success) {
+                        setPayrollData(Array.isArray(result.data) ? result.data : [result.data]);
+                    } else {
+                        setError(result.message || 'Không thể tải dữ liệu');
+                    }
+                } catch (error) {
+                    setError(error.response?.data?.message || 'Lỗi kết nối server');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🏢 Hệ Thống Quản Lý Lương</h1>
+                    </div>
+                    
+                    <div className="nav">
+                        <div className="user-info">
+                            <span>👤 Xin chào, <strong>{user.fullName || user.username}</strong></span>
+                            <span className="badge" style={{
+                                background: user.role === 'admin' ? '#28a745' : '#007bff',
+                                color: 'white',
+                                padding: '4px 8px',
+                                borderRadius: '12px',
+                                fontSize: '12px'
+                            }}>
+                                {user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'}
+                            </span>
+                        </div>
+                        <button className="btn btn-danger" onClick={onLogout}>
+                            Đăng Xuất
+                        </button>
+                    </div>
+
+                    <div className="card">
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+                            <h2>📊 {user.role === 'admin' ? 'Danh Sách Lương Nhân Viên' : 'Thông Tin Lương Của Bạn'}</h2>
+                            <button className="btn btn-primary" onClick={loadPayrollData}>
+                                🔄 Tải Lại Dữ Liệu
+                            </button>
+                        </div>
+
+                        {error && (
+                            <div className="alert alert-danger">{error}</div>
+                        )}
+
+                        {loading ? (
+                            <div className="loading">
+                                <p>⏳ Đang tải dữ liệu...</p>
+                            </div>
+                        ) : payrollData.length > 0 ? (
+                            <div style={{overflowX: 'auto'}}>
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã NV</th>
+                                            <th>Họ Tên</th>
+                                            <th>Lương CB</th>
+                                            <th>Phụ Cấp</th>
+                                            <th>Thuế</th>
+                                            <th>Thực Lĩnh</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {payrollData.map((item, index) => (
+                                            <tr key={index}>
+                                                <td><strong>{item.ma_nv}</strong></td>
+                                                <td>{item.ho_ten}</td>
+                                                <td className="currency">{formatCurrency(item.luong_cb)}</td>
+                                                <td className="currency">{formatCurrency(item.phu_cap)}</td>
+                                                <td className="currency">{formatCurrency(item.thue)}</td>
+                                                <td className="currency" style={{fontSize: '16px', fontWeight: 'bold'}}>
+                                                    {formatCurrency(item.thuc_linh)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                
+                                <div style={{marginTop: '20px', textAlign: 'center', color: '#666'}}>
+                                    <p>📈 Tổng số bản ghi: <strong>{payrollData.length}</strong></p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div style={{textAlign: 'center', padding: '40px', color: '#666'}}>
+                                <p>📭 Không có dữ liệu lương</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [token, setToken] = useState('');
+            const [user, setUser] = useState(null);
+
+            const handleLogin = (authToken, userData) => {
+                setToken(authToken);
+                setUser(userData);
+                setIsLoggedIn(true);
+            };
+
+            const handleLogout = () => {
+                setToken('');
+                setUser(null);
+                setIsLoggedIn(false);
+            };
+
+            return (
+                <div>
+                    {isLoggedIn ? (
+                        <Dashboard token={token} user={user} onLogout={handleLogout} />
+                    ) : (
+                        <Login onLogin={handleLogin} />
+                    )}
+                </div>
+            );
+        };
+
+        // Render App
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

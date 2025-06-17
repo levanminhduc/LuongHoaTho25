@@ -1,0 +1,29 @@
+module.exports = {
+  env: {
+    browser: false,
+    es2021: true,
+    node: true,
+    jest: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'airbnb-base',
+  ],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  rules: {
+    'no-console': 'off',
+    'consistent-return': 'off',
+    'func-names': 'off',
+    'object-shorthand': 'off',
+    'no-process-exit': 'off',
+    'no-param-reassign': 'off',
+    'no-return-await': 'off',
+    'no-underscore-dangle': 'off',
+    'class-methods-use-this': 'off',
+    'prefer-destructuring': ['error', { object: true, array: false }],
+    'no-unused-vars': ['error', { argsIgnorePattern: 'req|res|next|val' }],
+  },
+};
