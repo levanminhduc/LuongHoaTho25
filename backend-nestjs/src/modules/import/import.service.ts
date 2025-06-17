@@ -65,16 +65,10 @@ export class ImportService {
           const importData = {
             ma_nv: row['Mã NV'],
             ho_ten: row['Họ tên'],
-            chuc_vu: row['Chức vụ'] || '',
-            phong_ban: row['Phòng ban'] || '',
-            luong_co_ban: parseFloat(row['Lương cơ bản']) || 0,
-            he_so_luong: parseFloat(row['Hệ số lương']) || 0,
-            so_ngay_cong: parseInt(row['Số ngày công']) || 0,
+            luong_cb: parseFloat(row['Lương CB']) || 0,
             phu_cap: parseFloat(row['Phụ cấp']) || 0,
-            thuong: parseFloat(row['Thưởng']) || 0,
-            khau_tru: parseFloat(row['Khấu trừ']) || 0,
-            luong_thuc_linh: parseFloat(row['Lương thực lĩnh']) || 0,
-            file_name: file.originalname,
+            thue: parseFloat(row['Thuế']) || 0,
+            thuc_linh: parseFloat(row['Thực lĩnh']) || 0,
           };
 
           validData.push(importData);
@@ -113,5 +107,108 @@ export class ImportService {
   async deleteImportRecord(id: number): Promise<boolean> {
     const result = await this.salaryImportRepository.delete(id);
     return result.affected ? result.affected > 0 : false;
+  }
+
+  async generateExcelTemplate(): Promise<Buffer> {
+    try {
+      // Lấy dữ liệu nhân viên mẫu từ database
+      const employees = await this.employeeRepository.find({
+        take: 3,
+        order: { ma_nv: 'ASC' },
+      });
+
+      // Tạo dữ liệu mẫu
+      const templateData: any[] = [];
+
+      // Thêm dữ liệu mẫu từ nhân viên thực tế
+      if (employees.length > 0) {
+        employees.forEach((emp, index) => {
+          const sampleSalaries = [
+            {
+              luong_cb: 15000000,
+              phu_cap: 3000000,
+              thue: 1800000,
+              thuc_linh: 16200000,
+            },
+            {
+              luong_cb: 12000000,
+              phu_cap: 2500000,
+              thue: 1450000,
+              thuc_linh: 13050000,
+            },
+            {
+              luong_cb: 18000000,
+              phu_cap: 3500000,
+              thue: 2150000,
+              thuc_linh: 19350000,
+            },
+          ];
+
+          const salary = sampleSalaries[index] || sampleSalaries[0];
+
+          templateData.push({
+            'Mã NV': emp.ma_nv,
+            'Họ tên': emp.ho_ten,
+            'Lương CB': salary.luong_cb,
+            'Phụ cấp': salary.phu_cap,
+            Thuế: salary.thue,
+            'Thực lĩnh': salary.thuc_linh,
+          });
+        });
+      } else {
+        // Fallback data nếu không có nhân viên trong DB
+        templateData.push(
+          {
+            'Mã NV': 'NV001',
+            'Họ tên': 'Nguyễn Văn An',
+            'Lương CB': 15000000,
+            'Phụ cấp': 3000000,
+            Thuế: 1800000,
+            'Thực lĩnh': 16200000,
+          },
+          {
+            'Mã NV': 'NV002',
+            'Họ tên': 'Trần Thị Bình',
+            'Lương CB': 12000000,
+            'Phụ cấp': 2500000,
+            Thuế: 1450000,
+            'Thực lĩnh': 13050000,
+          },
+          {
+            'Mã NV': 'NV003',
+            'Họ tên': 'Lê Văn Cường',
+            'Lương CB': 18000000,
+            'Phụ cấp': 3500000,
+            Thuế: 2150000,
+            'Thực lĩnh': 19350000,
+          },
+        );
+      }
+
+      // Tạo workbook và worksheet
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(templateData);
+
+      // Thiết lập độ rộng cột
+      const columnWidths = [
+        { wch: 12 }, // Mã NV
+        { wch: 20 }, // Họ tên
+        { wch: 15 }, // Lương CB
+        { wch: 12 }, // Phụ cấp
+        { wch: 12 }, // Thuế
+        { wch: 15 }, // Thực lĩnh
+      ];
+      worksheet['!cols'] = columnWidths;
+
+      // Thêm worksheet vào workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Mẫu Import Lương');
+
+      // Tạo buffer từ workbook
+      const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+      return buffer;
+    } catch (error) {
+      throw new BadRequestException(`Lỗi tạo file Excel mẫu: ${error.message}`);
+    }
   }
 }

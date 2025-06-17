@@ -9,7 +9,9 @@ import {
   UseGuards,
   HttpStatus,
   HttpException,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
@@ -63,6 +65,33 @@ export class ImportController {
       throw new HttpException(
         `Lỗi import: ${error.message}`,
         HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Get('template')
+  @ApiOperation({ summary: 'Tải xuống file Excel mẫu' })
+  @ApiResponse({ status: 200, description: 'File Excel mẫu' })
+  @ApiResponse({ status: 401, description: 'Chưa đăng nhập' })
+  async downloadTemplate(@Res() res: Response): Promise<void> {
+    try {
+      const buffer = await this.importService.generateExcelTemplate();
+
+      res.setHeader(
+        'Content-Type',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename="mau-import-luong.xlsx"',
+      );
+      res.setHeader('Content-Length', buffer.length);
+
+      res.send(buffer);
+    } catch (error) {
+      throw new HttpException(
+        `Lỗi tạo file mẫu: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

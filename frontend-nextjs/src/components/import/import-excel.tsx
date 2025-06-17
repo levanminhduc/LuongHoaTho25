@@ -11,6 +11,7 @@ export default function ImportExcel() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +77,46 @@ export default function ImportExcel() {
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    if (!token) {
+      alert("Vui lòng đăng nhập");
+      return;
+    }
+
+    if (user?.role !== "admin") {
+      alert("Bạn không có quyền sử dụng tính năng này");
+      return;
+    }
+
+    try {
+      setDownloading(true);
+      const response = await fetch("http://localhost:4002/api/import/template", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mau-import-luong.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert("Lỗi tải file mẫu");
+      }
+    } catch (error) {
+      alert("Lỗi kết nối tới server");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
@@ -124,13 +165,24 @@ export default function ImportExcel() {
               </div>
             )}
 
-            <Button
-              onClick={handleUpload}
-              disabled={!file || uploading}
-              className="w-full"
-            >
-              {uploading ? "Đang tải lên..." : "Tải lên"}
-            </Button>
+            <div className="space-y-2">
+              <Button
+                onClick={handleUpload}
+                disabled={!file || uploading}
+                className="w-full"
+              >
+                {uploading ? "Đang tải lên..." : "Tải lên"}
+              </Button>
+
+              <Button
+                onClick={handleDownloadTemplate}
+                disabled={downloading}
+                variant="outline"
+                className="w-full"
+              >
+                {downloading ? "Đang tải..." : "📥 Tải file mẫu"}
+              </Button>
+            </div>
 
             {/* Result */}
             {result && (
@@ -248,8 +300,8 @@ export default function ImportExcel() {
 
             <div className="bg-blue-50 p-3 rounded-md">
               <p className="text-sm text-blue-800">
-                💡 <strong>Mẹo:</strong> Bạn có thể tải file mẫu từ danh sách
-                lương hiện tại để có đúng định dạng.
+                💡 <strong>Mẹo:</strong> Hãy tải file mẫu ở trên để có đúng định dạng và dữ liệu mẫu.
+                File mẫu chứa dữ liệu nhân viên thực tế từ hệ thống và có thể import thành công ngay lập tức.
               </p>
             </div>
           </CardContent>
