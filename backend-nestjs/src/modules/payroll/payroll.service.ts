@@ -97,6 +97,7 @@ export class PayrollService {
     }
 
     // Cập nhật thông tin ký xác nhận
+    payroll.da_ky = 1; // ✅ FIX: Cập nhật trạng thái đã ký
     payroll.ngay_ky = new Date();
     payroll.ten_da_ky = ho_ten;
 

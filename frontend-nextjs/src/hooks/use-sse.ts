@@ -52,6 +52,12 @@ export function useSSE(options: UseSSEOptions = {}) {
     }
   }, [user, token, options.autoConnect, status.connected]);
 
+  // Event handler callbacks (stable references)
+  const handleEvent = useCallback((event: SSEEvent) => {
+    setLastEvent(event);
+    setEvents((prev) => [...prev.slice(-49), event]); // Keep last 50 events
+  }, []);
+
   // Subscribe to events
   const subscribe = useCallback((eventType: string, callback: SSECallback) => {
     sseService.on(eventType, callback);
@@ -62,27 +68,25 @@ export function useSSE(options: UseSSEOptions = {}) {
   useEffect(() => {
     const unsubscribers: (() => void)[] = [];
 
-    if (options.eventTypes) {
-      options.eventTypes.forEach((eventType) => {
-        const unsubscribe = subscribe(eventType, (event) => {
-          setLastEvent(event);
-          setEvents((prev) => [...prev.slice(-49), event]); // Keep last 50 events
-        });
+    // Create stable event types array
+    const eventTypes = options.eventTypes || [];
+    const eventTypesKey = eventTypes.join(',');
+
+    if (eventTypes.length > 0) {
+      eventTypes.forEach((eventType) => {
+        const unsubscribe = subscribe(eventType, handleEvent);
         unsubscribers.push(unsubscribe);
       });
     }
 
     // Always subscribe to all events for general tracking
-    const unsubscribeAll = subscribe("all", (event) => {
-      setLastEvent(event);
-      setEvents((prev) => [...prev.slice(-49), event]);
-    });
+    const unsubscribeAll = subscribe("all", handleEvent);
     unsubscribers.push(unsubscribeAll);
 
     return () => {
       unsubscribers.forEach((unsub) => unsub());
     };
-  }, [options.eventTypes, subscribe]);
+  }, [options.eventTypes?.join(',') || '']); // ✅ FIX: Use join to create stable dependency
 
   // Manual connect/disconnect
   const connect = useCallback(() => {

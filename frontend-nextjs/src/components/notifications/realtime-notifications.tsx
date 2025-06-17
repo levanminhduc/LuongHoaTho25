@@ -24,7 +24,7 @@ export default function RealtimeNotifications({
     sendTestEvent,
     clearEvents,
   } = useSSE({
-    autoConnect: true, // ✅ Bật auto-connect cho admin
+    autoConnect: false, // ✅ FIX: Tắt auto-connect để tránh loop
     eventTypes: [
       "payroll_signed",
       "test",
