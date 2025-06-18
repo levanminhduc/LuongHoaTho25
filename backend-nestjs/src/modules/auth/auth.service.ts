@@ -29,9 +29,9 @@ export class AuthService {
     }
 
     // Employee login logic (simplified - in production, use proper password hashing)
-    // Employee username format: NV001, NV002, etc.
+    // Employee username: Chấp nhận mọi loại ký tự (ma_nv, CCCD, etc.)
     // Password: CCCD (12 digits)
-    if (username.startsWith('NV') && password.length === 12) {
+    if (username && username.trim() !== '' && password.length === 12) {
       return {
         username: username,
         role: 'employee',

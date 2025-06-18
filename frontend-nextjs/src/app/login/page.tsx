@@ -16,6 +16,9 @@ export default function LoginPage() {
             <p>
               <strong>Nhân viên:</strong> NV001 / 123456789012
             </p>
+            <p>
+              <strong>Nhân viên (mã số):</strong> 4211 / 123456789999
+            </p>
           </div>
         </div>
       </div>

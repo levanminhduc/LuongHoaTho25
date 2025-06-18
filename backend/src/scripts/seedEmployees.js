@@ -31,6 +31,7 @@ const seedEmployees = async () => {
       { ma_nv: "NV008", ho_ten: "Bùi Thị Lan", cccd: "123456789019" },
       { ma_nv: "NV009", ho_ten: "Ngô Văn Minh", cccd: "123456789020" },
       { ma_nv: "NV010", ho_ten: "Lý Thị Nga", cccd: "123456789021" },
+      { ma_nv: "4211", ho_ten: "Lê Văn Minh Đức", cccd: "123456789999" },
     ];
 
     // Clear existing data
@@ -64,6 +65,7 @@ const seedEmployees = async () => {
     console.log("Admin: admin/admin123");
     console.log("Nhân viên: NV001/123456789012 (CCCD)");
     console.log("Nhân viên: NV002/123456789013 (CCCD)");
+    console.log("Nhân viên: 4211/123456789999 (CCCD)");
     console.log("...");
   } catch (error) {
     console.error("❌ Lỗi seed dữ liệu nhân viên:", error.message);
