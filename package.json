@@ -13,7 +13,7 @@
     "dev:nestjs": "cd backend-nestjs && npm run start:dev",
     "start:new-system": "npm run dev:new",
     "start:all-systems": "npm run dev:all",
-    "build": "npm run build:backend && npm run build:frontend",
+    "build": "npm run build:nextjs",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
     "build:nextjs": "cd frontend-nextjs && npm run build",
