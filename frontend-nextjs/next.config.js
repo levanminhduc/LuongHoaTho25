@@ -31,14 +31,10 @@ const nextConfig = {
 
     return config;
   },
-  // Remove deprecated experimental options
-  swcMinify: true,
   images: {
-    domains: [],
+    remotePatterns: [],
     unoptimized: false,
   },
-  // Optimize for Vercel deployment
-  output: "standalone",
 };
 
 module.exports = nextConfig;

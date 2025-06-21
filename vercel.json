@@ -1,0 +1,25 @@
+{
+  "buildCommand": "cd frontend-nextjs && npm ci && npm run build",
+  "outputDirectory": "frontend-nextjs/.next",
+  "installCommand": "cd frontend-nextjs && npm ci",
+  "framework": "nextjs",
+  "nodeVersion": "18.x",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url",
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_API_URL": "@next_public_api_url", 
+      "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url",
+      "NODE_ENV": "production"
+    }
+  },
+  "functions": {
+    "frontend-nextjs/src/app/**/*.tsx": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"]
+}
