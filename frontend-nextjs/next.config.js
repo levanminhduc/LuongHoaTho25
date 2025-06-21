@@ -20,12 +20,25 @@ const nextConfig = {
       ...config.resolve.alias,
       "@": path.resolve(__dirname, "src"),
     };
+
+    // Ensure proper module resolution for Vercel
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+
     return config;
   },
-  experimental: {
-    // Enable modern bundling for better compatibility
-    esmExternals: "loose",
+  // Remove deprecated experimental options
+  swcMinify: true,
+  images: {
+    domains: [],
+    unoptimized: false,
   },
+  // Optimize for Vercel deployment
+  output: "standalone",
 };
 
 module.exports = nextConfig;

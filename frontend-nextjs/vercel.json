@@ -1,22 +1,26 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm ci && npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "npm install",
+  "installCommand": "npm ci",
   "devCommand": "npm run dev",
+  "nodeVersion": "18.x",
   "env": {
     "NEXT_PUBLIC_API_URL": "@next_public_api_url",
-    "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url"
+    "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url",
+    "NODE_ENV": "production"
   },
   "build": {
     "env": {
       "NEXT_PUBLIC_API_URL": "@next_public_api_url",
-      "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url"
+      "NEXT_PUBLIC_FRONTEND_URL": "@next_public_frontend_url",
+      "NODE_ENV": "production"
     }
   },
   "functions": {
     "src/app/**/*.tsx": {
       "maxDuration": 30
     }
-  }
+  },
+  "regions": ["iad1"]
 }
