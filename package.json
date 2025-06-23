@@ -1,0 +1,84 @@
+{
+  "name": "payroll-management-system",
+  "version": "1.0.0",
+  "description": "Hệ thống quản lý và tra cứu lương nhân viên",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:new": "concurrently \"npm run dev:backend\" \"npm run dev:nextjs\"",
+    "dev:nextjs": "cd frontend-nextjs && npm run dev",
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:nestjs\" \"npm run dev:frontend\" \"npm run dev:nextjs\"",
+    "dev:nestjs": "cd backend-nestjs && npm run start:dev",
+    "start:new-system": "npm run dev:new",
+    "start:all-systems": "npm run dev:all",
+    "build": "npm run build:nextjs",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build:nextjs": "cd frontend-nextjs && npm run build",
+    "build:all": "npm run build:backend && npm run build:frontend && npm run build:nextjs",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm run lint && npm run type-check",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../frontend-nextjs && npm install && cd ../backend-nestjs && npm install",
+    "clean": "rimraf node_modules backend/node_modules frontend/node_modules frontend-nextjs/node_modules backend-nestjs/node_modules",
+    "docker:dev": "docker-compose up --build",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up --build",
+    "docker:down": "docker-compose down",
+    "seed": "cd backend && npm run seed",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "payroll",
+    "management",
+    "react",
+    "nodejs",
+    "express",
+    "mysql",
+    "typescript"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/payroll-management-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/payroll-management-system/issues"
+  },
+  "homepage": "https://github.com/your-username/payroll-management-system#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "multer": "^2.0.1",
+    "next": "^15.3.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.5"
+  }
+}
