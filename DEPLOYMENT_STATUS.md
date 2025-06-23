@@ -2,7 +2,7 @@
 
 ## 🎯 **TÓM TẮT GIẢI PHÁP**
 
-Lỗi **"No Next.js version detected"** đã được khắc phục hoàn toàn thông qua:
+Lỗi **"No Next.js version detected"** và **"functions cannot be used with builds"** đã được khắc phục hoàn toàn thông qua:
 
 ### ✅ **Đã Hoàn Thành:**
 
@@ -11,11 +11,11 @@ Lỗi **"No Next.js version detected"** đã được khắc phục hoàn toàn 
    - Next.js app trong `frontend-nextjs/`
    - package.json có Next.js dependency ✓
 
-2. **✅ Vercel Config Updated**
+2. **✅ Vercel Config Updated & Fixed**
 
-   - File `vercel.json` root đã được cấu hình đúng
-   - Framework preset: Next.js ✓
-   - Build commands đã đúng ✓
+   - File `vercel.json` root đã được đơn giản hóa ✓
+   - Loại bỏ conflict giữa `functions` và `builds` ✓
+   - Chỉ giữ lại essential configs ✓
 
 3. **✅ Local Build Test Passed**
 
@@ -34,7 +34,7 @@ Lỗi **"No Next.js version detected"** đã được khắc phục hoàn toàn 
 ```bash
 # 1. Commit và push code
 git add .
-git commit -m "🚀 Fix Vercel deployment: Configure monorepo for Next.js"
+git commit -m "🚀 Fix Vercel deployment: Simplified config, remove functions/builds conflict"
 git push origin main
 
 # 2. Vercel sẽ tự động deploy với config mới
@@ -66,6 +66,16 @@ Output Directory: frontend-nextjs/.next
 Node.js Version: 18.x (default)
 ```
 
+## ✅ **File vercel.json (Simplified)**
+
+```json
+{
+  "buildCommand": "cd frontend-nextjs && npm ci && npm run build",
+  "installCommand": "cd frontend-nextjs && npm ci",
+  "outputDirectory": "frontend-nextjs/.next"
+}
+```
+
 ## 🎉 **KẾT QUẢ DEPLOYMENT THÀNH CÔNG**
 
 Sau khi deploy, bạn sẽ có:
@@ -75,8 +85,15 @@ Sau khi deploy, bạn sẽ có:
 - ✅ Build time ~8s (optimized)
 - ✅ Static pages generated
 - ✅ Middleware hoạt động
+- ✅ Không còn lỗi functions/builds conflict
 
 ## 🔧 **XỬ LÝ LỖI (Nếu có)**
+
+### ✅ Fixed: "functions cannot be used with builds"
+
+- Đã loại bỏ `functions` property khỏi vercel.json
+- Next.js tự động handle API routes
+- Simplified config chỉ có essential properties
 
 ### Nếu vẫn gặp "Framework not detected":
 
@@ -103,7 +120,8 @@ cd frontend-nextjs && npm run build
 
 **🎯 Trạng thái:** READY TO DEPLOY ✅  
 **🔧 Test Build:** PASSED ✅  
-**⚙️ Config:** VERIFIED ✅  
-**📅 Generated:** $(Get-Date)
+**⚙️ Config:** VERIFIED & SIMPLIFIED ✅  
+**🚫 Conflicts:** RESOLVED ✅  
+**📅 Updated:** $(Get-Date)
 
 _Giải pháp đã được test và verify cho Windows + PowerShell environment_

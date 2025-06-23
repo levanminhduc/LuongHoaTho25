@@ -52,7 +52,7 @@ vercel --prod
 
 ## 📋 **CHECKLIST DEPLOY THÀNH CÔNG**
 
-- [ ] File `vercel.json` ở root đã được cập nhật
+- [ ] File `vercel.json` ở root đã được cập nhật (simplified version)
 - [ ] File `.vercelignore` đã được tạo
 - [ ] Vercel Dashboard settings đã đúng
 - [ ] Next.js có trong `frontend-nextjs/package.json`
@@ -64,9 +64,19 @@ vercel --prod
 ### Lỗi "Framework not detected"
 
 ```bash
-# Đảm bảo trong vercel.json có:
-"framework": "nextjs"
-"builds": [{ "src": "frontend-nextjs/package.json", "use": "@vercel/next" }]
+# Đảm bảo vercel.json chỉ có basic config
+{
+  "buildCommand": "cd frontend-nextjs && npm ci && npm run build",
+  "installCommand": "cd frontend-nextjs && npm ci",
+  "outputDirectory": "frontend-nextjs/.next"
+}
+```
+
+### Lỗi "functions cannot be used with builds"
+
+```bash
+# Đã fix: Loại bỏ functions property khỏi vercel.json
+# Next.js tự động handle API routes
 ```
 
 ### Lỗi "Build failed"

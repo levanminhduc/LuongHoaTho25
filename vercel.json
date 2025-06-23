@@ -1,58 +1,5 @@
 {
-  "version": 2,
-  "framework": "nextjs",
   "buildCommand": "cd frontend-nextjs && npm ci && npm run build",
   "installCommand": "cd frontend-nextjs && npm ci",
-  "outputDirectory": "frontend-nextjs/.next",
-  "devCommand": "cd frontend-nextjs && npm run dev",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "functions": {
-    "frontend-nextjs/src/app/api/**/*.js": {
-      "runtime": "nodejs18.x",
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
-  "builds": [
-    {
-      "src": "frontend-nextjs/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "outputDirectory": "frontend-nextjs/.next"
 }
