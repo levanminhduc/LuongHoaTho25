@@ -1,0 +1,47 @@
+# Ignore backend và các file không cần thiết
+backend-nestjs/
+test-files/
+database/
+scripts/
+*.md
+*.sh
+*.js
+!frontend-nextjs/
+
+# Ignore node_modules ở root
+/node_modules/
+/package-lock.json
+
+# Ignore các file docs
+ADVANCED_FRAMEWORK_DETECTION_SOLUTIONS.md
+CLEANUP-REPORT.md
+COMPLETE_MONOREPO_SOLUTION.md
+COMPLETE_NEXTJS_DETECTION_SOLUTION.md
+COMPREHENSIVE_NEXTJS_DETECTION_SOLUTION.md
+COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md
+DEEP_DIVE_VERCEL_VS_LOCAL_DETECTION.md
+DEFINITIVE_PERMANENT_SOLUTION.md
+EMERGENCY_DEPLOY_NOW.sh
+FINAL_SOLUTION_NEXTJS_DETECTION.md
+FINAL_SOLUTION_SUMMARY.md
+FIX_FRAMEWORK_DETECTION_NOW.js
+IMPLEMENT_SOLUTION_NOW.sh
+NEXTJS_DETECTION_ROOT_CAUSE_ANALYSIS.md
+ROOT_CAUSE_INVESTIGATION_FRAMEWORK_DETECTION.md
+ULTIMATE_NEXTJS_DETECTION_FIX.md
+VERCEL_CONFIG_FIX.md
+VERCEL_FIXES_SUMMARY.md
+VERCEL_FRAMEWORK_DETECTION_EDGE_CASE_ANALYSIS.md
+VERCEL_NEXTJS_DETECTION_FIX.md
+VERCEL_ROOT_DIRECTORY_FIX.md
+VERCEL_ROOT_DIRECTORY_SOLUTION.md
+
+# Ignore các script và file check
+check-dependencies.js
+clean-for-vercel.sh
+fix-nextjs-detection.js
+setup-manual-framework-detection.js
+verify-fix.md
+verify-nextjs-detection.js
+verify-vercel-config.js
+vercel-cli-deployment-solution.sh 
